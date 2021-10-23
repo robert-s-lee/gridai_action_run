@@ -26,6 +26,5 @@ runs:
     - id: run_script
       run: |
         grid run ${{ inputs.grid_args }} --name ${{ inputs.run_name }} ${{ inputs.script_name }} ${{ inputs.script_args }} | tee grid.run.log
-        RUN_NAME=$(grep grid_name grid.run.log | cut -d':' -f 2 | sed -e 's/^[[:space:]]*//')
-        echo "::set-output name=RUN_NAME::${{ inputs.run_name }}"
+        echo "::set-output name=run_name::${{ inputs.run_name }}"
       shell: bash
