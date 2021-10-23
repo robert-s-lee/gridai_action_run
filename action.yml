@@ -11,14 +11,18 @@ inputs:
   script_args:
     required: false
     default: ""
-    type: string         
+    type: string   
+outputs:
+  run_name: 
+    value: ${{ steps.run_script.outputs.RUN_NAME }}          
 runs:
   using: "composite"
   steps:
-    - run: |
+    - id: run_script
+      run: |
         grid run ${{ inputs.grid_args }} ${{ inputs.script_name }} ${{ inputs.script_args }} | tee grid.run.log
         RUN_NAME=$(grep grid_name grid.run.log | cut -d':' -f 2 | sed -e 's/^[[:space:]]*//')
-        echo "RUN_NAME=${RUN_NAME}" >> $GITHUB_ENV
+        echo "::set-output name=RUN_NAME::$RUN_NAME)"
         if [[ -z "${RUN_NAME}" ]]; then
           echo "Error: grid_name not found in output"
           exit 1
