@@ -1,5 +1,10 @@
 name: 'Grid.ai Run'
 inputs:
+  # make sure name is not longer than this
+  run_name:
+    required: false
+    default: "r$(date '+%y%m%d-%H%M%S')"
+    type: string
   script_name:
     required: true
     default: "run.py"
@@ -20,11 +25,7 @@ runs:
   steps:
     - id: run_script
       run: |
-        grid run ${{ inputs.grid_args }} ${{ inputs.script_name }} ${{ inputs.script_args }} | tee grid.run.log
+        grid run ${{ inputs.grid_args }} --name ${{ inputs.run_name }} ${{ inputs.script_name }} ${{ inputs.script_args }} | tee grid.run.log
         RUN_NAME=$(grep grid_name grid.run.log | cut -d':' -f 2 | sed -e 's/^[[:space:]]*//')
-        if [[ -z "${RUN_NAME}" ]]; then
-          echo "Error: grid_name not found in output"
-          exit 1
-        fi 
-        echo "::set-output name=RUN_NAME::$RUN_NAME"
+        echo "::set-output name=RUN_NAME::${{ inputs.run_name }}"
       shell: bash
