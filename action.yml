@@ -22,9 +22,9 @@ runs:
       run: |
         grid run ${{ inputs.grid_args }} ${{ inputs.script_name }} ${{ inputs.script_args }} | tee grid.run.log
         RUN_NAME=$(grep grid_name grid.run.log | cut -d':' -f 2 | sed -e 's/^[[:space:]]*//')
-        echo "::set-output name=RUN_NAME::$RUN_NAME)"
         if [[ -z "${RUN_NAME}" ]]; then
           echo "Error: grid_name not found in output"
           exit 1
         fi 
+        echo "::set-output name=RUN_NAME::$RUN_NAME"
       shell: bash
