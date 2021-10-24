@@ -53,8 +53,8 @@ runs:
         echo obj_exit_code ${{ steps.run_status.outputs.obj_exit_code }}     
       shell: bash
     - run: |
-      echo obj_summary ${{ steps.run_status.outputs.obj_summary }}  
-      if [ "${{ steps.run_status.outputs.obj_status }}" = "completed" -a ! -z "${{ inputs.script_name }}" ]; then
-        grid artifacts  --download_dir {{ inputs.download_artifacts }} ${{ steps.run_script.outputs.run_name }}    
-      fi 
-    shell: bash
+        echo obj_summary ${{ steps.run_status.outputs.obj_summary }}  
+        if [ "${{ steps.run_status.outputs.obj_status }}" = "completed" -a ! -z "${{ inputs.script_name }}" ]; then
+          grid artifacts  --download_dir {{ inputs.download_artifacts }} ${{ steps.run_script.outputs.run_name }}    
+        fi 
+      shell: bash
