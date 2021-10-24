@@ -25,7 +25,7 @@ runs:
   steps:
     - id: run_script
       run: |
-        # make the run name available to the next step
+        export run_name=${{ inputs.run_name }}
         echo "::set-output name=run_name::${run_name}"
         echo "run_name=${run_name}" >> $GITHUB_ENV
         grid run ${{ inputs.grid_args }} --name ${run_name} ${{ inputs.script_name }} ${{ inputs.script_args }} | tee grid.run.log
