@@ -25,8 +25,16 @@ runs:
   steps:
     - id: run_script
       run: |
-        export run_name=${{ inputs.run_name }}
-        grid run ${{ inputs.grid_args }} --name ${run_name} ${{ inputs.script_name }} ${{ inputs.script_args }} | tee grid.run.log
+        # make the run name available to the next step
+        echo "::set-output name=run_name::${run_name}"
         echo "run_name=${run_name}" >> $GITHUB_ENV
-        echo "::set-output name=run_name::$(echo $run_name)"
+        grid run ${{ inputs.grid_args }} --name ${run_name} ${{ inputs.script_name }} ${{ inputs.script_args }} | tee grid.run.log
+      shell: bash 
+    - run:
+        echo run_name=${{ steps.run_script.outputs.run_name }}
       shell: bash
+    - id: run_status
+      uses: robert-s-lee/actions@main
+      with:
+        obj_type: run 
+        obj_id: ${{ steps.run_script.outputs.run_name }}
