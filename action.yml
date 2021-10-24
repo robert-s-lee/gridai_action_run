@@ -17,6 +17,10 @@ inputs:
     required: false
     default: ""
     type: string   
+  download_artifacts:
+    required: false
+    default: "./"
+    type: boolean  
 outputs:
   run_name: 
     value: ${{ steps.run_script.outputs.run_name }}          
@@ -43,3 +47,14 @@ runs:
       with:
         obj_type: run 
         obj_id: ${{ steps.run_script.outputs.run_name }}
+    - run: |
+        echo obj_summary ${{ steps.run_status.outputs.obj_summary }}  
+        echo obj_status ${{ steps.run_status.outputs.obj_status }}  
+        echo obj_exit_code ${{ steps.run_status.outputs.obj_exit_code }}     
+      shell: bash
+    - run: |
+      echo obj_summary ${{ steps.run_status.outputs.obj_summary }}  
+      if [ "${{ steps.run_status.outputs.obj_status }}" = "completed" -a ! -z "${{ inputs.script_name }}" ]; then
+        grid artifacts  --download_dir {{ inputs.download_artifacts }} ${{ steps.run_script.outputs.run_name }}    
+      fi 
+    shell: bash
