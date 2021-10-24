@@ -20,6 +20,12 @@ inputs:
 outputs:
   run_name: 
     value: ${{ steps.run_script.outputs.run_name }}          
+  obj_summary: 
+    value: ${{ steps.run_status.outputs.obj_summary }}  
+  obj_status: 
+    value: ${{ steps.run_status.outputs.obj_status }}  
+  obj_exit_code: 
+    value: ${{ steps.run_status.outputs.obj_exit_code }}          
 runs:
   using: "composite"
   steps:
@@ -27,7 +33,6 @@ runs:
       run: |
         export run_name=${{ inputs.run_name }}
         echo "::set-output name=run_name::${run_name}"
-        echo "run_name=${run_name}" >> $GITHUB_ENV
         grid run ${{ inputs.grid_args }} --name ${run_name} ${{ inputs.script_name }} ${{ inputs.script_args }} | tee grid.run.log
       shell: bash 
     - run:
