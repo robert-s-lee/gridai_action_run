@@ -1,50 +1,49 @@
 name: 'Grid.ai Run'
 inputs:
-  # make sure name is not longer than this
-  run_name:
+  run-name:
     required: false
     default: "r$(date '+%y%m%d-%H%M%S')"
     type: string
-  script_name:
+  script-name:
     required: true
     default: "run.py"
     type: string       
-  grid_args:
+  grid-args:
     required: false
     default: "--localdir --instance_type t2.medium --dependency_file requirements.txt"
     type: string    
-  script_args:
+  script-args:
     required: false
     default: ""
     type: string   
 outputs:
-  run_name: 
-    value: ${{ steps.run_script.outputs.run_name }}          
-  obj_summary: 
-    value: ${{ steps.run_status.outputs.obj_summary }}  
-  obj_status: 
-    value: ${{ steps.run_status.outputs.obj_status }}  
-  obj_exit_code: 
-    value: ${{ steps.run_status.outputs.obj_exit_code }}          
+  run-name: 
+    value: ${{ steps.run-script.outputs.run-name }}          
+  obj-summary: 
+    value: ${{ steps.run-status.outputs.obj-summary }}  
+  obj-status: 
+    value: ${{ steps.run-status.outputs.obj-status }}  
+  obj-exit-code: 
+    value: ${{ steps.run-status.outputs.obj-exit-code }}          
 runs:
   using: "composite"
   steps:
-    - id: run_script
+    - id: run-script
       run: |
-        export run_name=${{ inputs.run_name }}
-        echo "::set-output name=run_name::${run_name}"
-        grid run ${{ inputs.grid_args }} --name ${run_name} ${{ inputs.script_name }} ${{ inputs.script_args }} | tee grid.run.log
+        export run_name=${{ inputs.run-name }}
+        echo "::set-output name=run-name::${run_name}"
+        grid run ${{ inputs.grid-args }} --name ${run_name} ${{ inputs.script-name }} ${{ inputs.script-args }} | tee grid.run.log | awk -F: '$1=/grid_name/ {print $2}' test.txt | tr -s '[:blank:]'
       shell: bash 
     - run:
-        echo run_name=${{ steps.run_script.outputs.run_name }}
+        echo run-name=${{ steps.run-script.outputs.run-name }}
       shell: bash
-    - id: run_status
+    - id: run-status
       uses: robert-s-lee/actions@main
       with:
-        obj_type: run 
-        obj_id: ${{ steps.run_script.outputs.run_name }}
+        obj-type: run 
+        obj-id: ${{ steps.run-script.outputs.run-name }}
     - run: |
-        echo obj_summary ${{ steps.run_status.outputs.obj_summary }}  
-        echo obj_status ${{ steps.run_status.outputs.obj_status }}  
-        echo obj_exit_code ${{ steps.run_status.outputs.obj_exit_code }}     
+        echo obj-summary ${{ steps.run-status.outputs.obj-summary }}  
+        echo obj-status ${{ steps.run-status.outputs.obj-status }}  
+        echo obj-exit-code ${{ steps.run-status.outputs.obj-exit-code }}     
       shell: bash
